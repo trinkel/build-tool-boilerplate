@@ -1,28 +1,37 @@
+/** @format */
+
 // Plugins
 import { terser } from 'rollup-plugin-terser';
 import pkg from './package.json';
 
-
 // Configs
 var configs = {
 	name: 'BuildToolsCookbook',
-	files: ['main.js', 'detects.js', 'another-file.js'],
+	files: ['main.js'],
 	formats: ['iife', 'es', 'amd', 'cjs'],
 	default: 'iife',
 	pathIn: 'src/js',
 	pathOut: 'dist/js',
-	minify: true
+	minify: true,
 };
 
 // Banner
-var banner = `/*! ${configs.name ? configs.name : pkg.name} v${pkg.version} | (c) ${new Date().getFullYear()} ${pkg.author.name} | ${pkg.license} License | ${pkg.repository.url} */`;
+var banner = `/*!
+ * ${configs.name ? configs.name : pkg.name} v${pkg.version}
+ *  (c) ${new Date().getFullYear()} ${pkg.author.name}
+ *  ${pkg.license} License
+ *  ${pkg.repository.url}
+ */
+`;
 
 var createOutput = function (filename, minify) {
 	return configs.formats.map(function (format) {
 		var output = {
-			file: `${configs.pathOut}/${filename}${format === configs.default ? '' : `.${format}`}${minify ? '.min' : ''}.js`,
+			file: `${configs.pathOut}/${filename}${
+				format === configs.default ? '' : `.${format}`
+			}${minify ? '.min' : ''}.js`,
 			format: format,
-			banner: banner
+			banner: banner,
 		};
 		if (format === 'iife') {
 			output.name = configs.name ? configs.name : pkg.name;
@@ -40,7 +49,6 @@ var createOutput = function (filename, minify) {
  * @return {Array}           The outputs array
  */
 var createOutputs = function (filename) {
-
 	// Create base outputs
 	var outputs = createOutput(filename);
 
@@ -52,7 +60,6 @@ var createOutputs = function (filename) {
 
 	// Merge and return the two arrays
 	return outputs.concat(outputsMin);
-
 };
 
 /**
@@ -64,7 +71,7 @@ var createExport = function (file) {
 		var filename = file.replace('.js', '');
 		return {
 			input: `${configs.pathIn}/${file}`,
-			output: createOutputs(filename)
+			output: createOutputs(filename),
 		};
 	});
 };
